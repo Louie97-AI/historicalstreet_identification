@@ -1,0 +1,35 @@
+
+make_dataloader: 
+  data_path: 'recover_yuan_road/official_data/1937map/research_using_data/beforedataset_data/paired_r_p_gdf_train&val_interval_50_scale_100_224_512.pickle'
+  batch_size: 32
+  augment: False
+
+street_network:
+  road_path: 'crossattentionmodel0418/data/paired_r_r_gdf_train_interval_50_scale_100_224_512.pickle'
+  nodes_features_path: 'crossattentionmodel0418/data/road_feature_ICN150.pickle'
+  GCN: True
+
+checkpoint_model:
+  name: 'Model_CrossAttention_VIT_GCN' # 'resnet50' 'resnext50' 'vgg19' 'vit' 'swintransformer' 'Model_CrossAttention_VIT_GCN'
+  img_scale: 'img_s2' # 'img_s1' 'img_s2'
+
+train:
+  epoch_num: 100
+
+choosing_model:
+  model:
+    vit: 'crossattentionmodel0418/VITmodelweight'
+  optimizer: 
+    args: 
+      lr: 1.0e-4
+      eps: 1.0e-8
+      weight_decay: 0.01
+  CosineAnnealingLR:
+    T_max: 100
+    eta_min: 1.0e-7  
+
+save_path:
+  eval_result_path: 'recover_yuan_road/model/checkpoint_models/infer_result/'
+  loss_result_path: 'recover_yuan_road/model/checkpoint_models/infer_result/'
+
+  experiment_id: 'resnet50_s1_0326.pickle'

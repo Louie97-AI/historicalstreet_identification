@@ -1,0 +1,86 @@
+make_dataloader: 
+  data_path: 'recover_yuan_road/official_data/1937map/research_using_data/beforedataset_data/paired_r_p_gdf_train&val_interval_50_scale_100_224_512.pickle'
+  batch_size: 32
+  augment: False
+
+street_network:
+  road_path: 'crossattentionmodel0418/data/paired_r_r_gdf_train_interval_50_scale_100_224_512.pickle'
+  nodes_features_path: 'crossattentionmodel0418/data/road_feature_ICN150.pickle'
+  GCN: True
+
+device: 'cuda:0'
+
+choosing_model:
+  model: 
+    name: 'Model_CrossAttention_VIT_GCN' #'Model_CrossAttention_VIT_GCN', 'Concat', 'Addition', 'Scale1_GCN', 'Scale2_GCN', 'img1_only_model', 'img2_only_model', 'img1_img2_model', 'Road_Structure_only_model'
+    vit: 'crossattentionmodel0418/VITmodelweight'
+    graph_compression_output_dim: 256
+  
+  param:
+    load_param: 'bin'
+
+  optimizer: 
+    name: 'adam' #SGD,Adam,AdamW
+    args: 
+      lr: 1.0e-4
+      eps: 1.0e-8
+      weight_decay: 0.01
+  
+  criterion:
+    name: 'Crossentropyloss'    
+  
+  CosineAnnealingLR:
+    T_max: 100
+    eta_min: 1.0e-7  
+
+
+model:
+  GCN:
+    o_road_dim: 128
+    road_dim: 256
+  
+  Motai_merge01:
+    img_input_dim: 768
+    img_middle_dim: 1024
+    concate_projection: 256    
+    merged01_output_dim: 768
+    merged_method: 'concat' # adding / concat
+
+  Motai_merge02:
+    img_dim: 768 
+    road_dim: 256
+    middle_dim: 512
+
+  param:
+    load_param: 'bin'
+
+  optimizer: 
+    name: 'adam' #SGD,Adam,AdamW
+    args: 
+      lr: 1.0e-4
+      eps: 1.0e-8
+      weight_decay: 0.01
+  
+  criterion:
+    name: 'Crossentropyloss'    
+  
+  CosineAnnealingLR:
+    T_max: 100
+    eta_min: 1.0e-7
+
+checkpoint_model:
+  path:
+    resnet101: 
+    swin_transformer:
+
+
+train:
+  epoch_num: 100
+  early_stop: 15
+
+save_path:
+  save_model_path: 'recover_yuan_road/model/core_models/weight/'
+  eval_result_path: 'recover_yuan_road/model/core_models/eval_result/eval_matrix0318'
+  loss_result_path: 'recover_yuan_road/model/core_models/eval_result/loss_result0318'
+  loss_png_path: 'recover_yuan_road/model/core_models/eval_result/loss_curves.png'
+  experiment_id: 'unaugment_with_testdataloader.pickle'
